@@ -12,6 +12,7 @@ import org.springframework.util.ObjectUtils;
 import com.becoder.dto.CategoryDto;
 import com.becoder.dto.CategoryResponse;
 import com.becoder.entity.Category;
+import com.becoder.exception.ResourceNotFoundException;
 import com.becoder.repository.CategoryRepository;
 import com.becoder.service.CategoryService;
 
@@ -27,16 +28,14 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public Boolean saveCategory(CategoryDto categoryDto) {
 
-
 		Category category = mapper.map(categoryDto, Category.class);
-		
-		if(ObjectUtils.isEmpty(category.getId())) {
+
+		if (ObjectUtils.isEmpty(category.getId())) {
 			category.setIsDeleted(false);
 			category.setCreatedBy(1);
-		}else {
+		} else {
 			updateCategory(category);
 		}
-
 
 		Category saveCategory = categoryRepo.save(category);
 		if (ObjectUtils.isEmpty(saveCategory)) {
@@ -47,14 +46,14 @@ public class CategoryServiceImpl implements CategoryService {
 
 	private void updateCategory(Category category) {
 		Optional<Category> fethcedData = categoryRepo.findById(category.getId());
-		if(fethcedData.isPresent()) {
+		if (fethcedData.isPresent()) {
 			Category existingData = fethcedData.get();
-			category.setCreatedBy(existingData.getCreatedBy()); 
+			category.setCreatedBy(existingData.getCreatedBy());
 			category.setIsDeleted(existingData.getIsDeleted());
 			category.setUpdatedBy(1);
 			category.setUpdatedOn(new Date());
 		}
-		
+
 	}
 
 	@Override
@@ -75,12 +74,13 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public CategoryDto getCategoryById(Integer id) {
-		Optional<Category> categoryData = categoryRepo.findByIdAndIsDeletedFalse(id);
-		if (categoryData.isPresent()) {
-			Category cat = categoryData.get();
-			return mapper.map(cat, CategoryDto.class);
+	public CategoryDto getCategoryById(Integer id) throws Exception {
+		Category category = categoryRepo.findByIdAndIsDeletedFalse(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Category not found with id=" + id));
 
+		if (!ObjectUtils.isEmpty(category)) {
+			category.getName().toUpperCase();
+			return mapper.map(category, CategoryDto.class);
 		}
 		return null;
 	}
