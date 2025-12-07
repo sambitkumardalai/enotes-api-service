@@ -57,8 +57,8 @@ public class CategoryServiceImpl implements CategoryService {
 			Category existingData = fethcedData.get();
 			category.setCreatedBy(existingData.getCreatedBy());
 			category.setIsDeleted(existingData.getIsDeleted());
-			category.setUpdatedBy(1);
-			category.setUpdatedOn(new Date());
+//			category.setUpdatedBy(1);
+//			category.setUpdatedOn(new Date());
 		}
 
 	}
