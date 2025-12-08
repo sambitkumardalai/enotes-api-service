@@ -13,6 +13,7 @@ import com.becoder.dto.CategoryDto;
 import com.becoder.dto.CategoryResponse;
 import com.becoder.entity.Category;
 import com.becoder.service.CategoryService;
+import com.becoder.util.CommonUtil;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,9 +33,9 @@ public class CategoryController {
 	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
 		Boolean saveCategory = categoryService.saveCategory(categoryDto);
 		if (saveCategory) {
-			return new ResponseEntity<>("Saved success", HttpStatus.OK);
+			return CommonUtil.createBuildResponseMessage("saved success", HttpStatus.CREATED);
 		} else {
-			return new ResponseEntity<>("Not saved", HttpStatus.INTERNAL_SERVER_ERROR);
+			return CommonUtil.createErrorResponseMessage("Category Not saved", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -44,7 +45,7 @@ public class CategoryController {
 		if (CollectionUtils.isEmpty(allCategory)) {
 			return ResponseEntity.noContent().build();
 		} else {
-			return new ResponseEntity<>(allCategory, HttpStatus.OK);
+			return CommonUtil.createBuildResponse(allCategory, HttpStatus.OK);
 		}
 	}
 
@@ -54,17 +55,17 @@ public class CategoryController {
 		if (CollectionUtils.isEmpty(allCategory)) {
 			return ResponseEntity.noContent().build();
 		} else {
-			return new ResponseEntity<>(allCategory, HttpStatus.OK);
+			return CommonUtil.createBuildResponse(allCategory, HttpStatus.OK);
 		}
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id) throws Exception{
+	public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id) throws Exception {
 		CategoryDto categoryDto = categoryService.getCategoryById(id);
 		if (ObjectUtils.isEmpty(categoryDto)) {
-			return new ResponseEntity<>("Category not found", HttpStatus.NOT_FOUND);
+			return CommonUtil.createBuildResponse("Category deleted success", HttpStatus.OK);
 		}
-		return new ResponseEntity<>(categoryDto, HttpStatus.OK);
+		return CommonUtil.createErrorResponseMessage("Category Not deleted", HttpStatus.INTERNAL_SERVER_ERROR);
 
 	}
 
