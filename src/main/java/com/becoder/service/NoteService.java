@@ -1,4 +1,4 @@
-package NotesService;
+package com.becoder.service;
 
 import java.util.List;
 

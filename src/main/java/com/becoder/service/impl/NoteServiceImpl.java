@@ -13,8 +13,7 @@ import com.becoder.entity.Notes;
 import com.becoder.exception.ResourceNotFoundException;
 import com.becoder.repository.CategoryRepository;
 import com.becoder.repository.NotesRepository;
-
-import NotesService.NoteService;
+import com.becoder.service.NoteService;
 
 @Service
 public class NoteServiceImpl implements NoteService {

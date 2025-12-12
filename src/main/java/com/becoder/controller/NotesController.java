@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.becoder.dto.NotesDto;
+import com.becoder.service.NoteService;
 import com.becoder.util.CommonUtil;
-
-import NotesService.NoteService;
 
 @RestController
 @RequestMapping("/api/v1/notes")
