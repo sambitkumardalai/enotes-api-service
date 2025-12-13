@@ -1,6 +1,8 @@
 package com.becoder.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.becoder.dto.NotesDto;
@@ -41,6 +44,7 @@ public class NoteServiceImpl implements NoteService {
 	private String uploadPath;
 	@Autowired
 	private FileRepository fileRepo;
+
 	@Override
 	public Boolean saveNotes(String notes, MultipartFile file) throws Exception {
 
@@ -70,9 +74,9 @@ public class NoteServiceImpl implements NoteService {
 			String originalFileName = file.getOriginalFilename();
 			String extension = FilenameUtils.getExtension(originalFileName);
 
-			List<String> extensionAllow = Arrays.asList("pdf", "xlsx", "jpg", "png");
+			List<String> extensionAllow = Arrays.asList("pdf", "xlsx", "jpg", "png", "docx");
 			if (!extensionAllow.contains(extension)) {
-				throw new IllegalArgumentException("Invalid file format ! Upload only .pdf,.xlsx,.jpg");
+				throw new IllegalArgumentException("Invalid file format ! Upload only .pdf,.xlsx,.jpg,docx");
 			}
 
 			String rndString = UUID.randomUUID().toString();
@@ -119,6 +123,17 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public List<NotesDto> getAllNotes() {
 		return notesRepository.findAll().stream().map(note -> mapper.map(note, NotesDto.class)).toList();
+	}
+
+	@Override
+	public FileDetails getFileDetails(Integer id) throws Exception {
+		return fileRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("File not found."));
+	}
+
+	@Override
+	public byte[] downloadFile(FileDetails fileDtls) throws Exception {
+		InputStream io = new FileInputStream(fileDtls.getPath());
+		return StreamUtils.copyToByteArray(io);
 	}
 
 }

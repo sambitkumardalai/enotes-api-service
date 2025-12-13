@@ -1,5 +1,7 @@
 package com.becoder.exception;
 
+import java.io.FileNotFoundException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -40,12 +42,17 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ExistDataException.class)
 	public ResponseEntity<?> handleExistDataException(ExistDataException e) {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+		return CommonUtil.createErrorResponse(e.getMessage(), HttpStatus.CONFLICT);
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		return CommonUtil.createErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(FileNotFoundException.class)
+	public ResponseEntity<?> handleFileNotFoundExceptionn(FileNotFoundException e) {
+		return CommonUtil.createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
 }

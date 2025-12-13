@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.becoder.dto.NotesDto;
+import com.becoder.entity.FileDetails;
 import com.becoder.repository.CategoryRepository;
 import com.becoder.repository.NotesRepository;
 
@@ -16,5 +17,8 @@ public interface NoteService {
 	public Boolean saveNotes(String notes, MultipartFile file) throws Exception;
 
 	public List<NotesDto> getAllNotes() throws Exception;
+	public FileDetails getFileDetails(Integer id) throws Exception;
+	public byte[] downloadFile(FileDetails fileDtls) throws Exception;
+	
 
 }
