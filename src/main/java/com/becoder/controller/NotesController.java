@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.becoder.dto.NotesDto;
+import com.becoder.dto.NotesResponse;
 import com.becoder.entity.FileDetails;
 import com.becoder.service.NoteService;
 import com.becoder.util.CommonUtil;
@@ -68,4 +69,13 @@ public class NotesController {
 
 	}
 
+	@GetMapping("/user-notes")
+	public ResponseEntity<?> getAllNotes(@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+
+	) throws Exception {
+		Integer userId = 1;
+		NotesResponse notes = noteService.getAllNotesByUser(userId,pageNo,pageSize);
+		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+	}
 }

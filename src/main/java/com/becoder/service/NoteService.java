@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.becoder.dto.NotesDto;
+import com.becoder.dto.NotesResponse;
 import com.becoder.entity.FileDetails;
 import com.becoder.repository.CategoryRepository;
 import com.becoder.repository.NotesRepository;
@@ -20,5 +21,6 @@ public interface NoteService {
 	public FileDetails getFileDetails(Integer id) throws Exception;
 	public byte[] downloadFile(FileDetails fileDtls) throws Exception;
 	
+	public NotesResponse getAllNotesByUser(Integer userId,Integer pageNo,Integer pageSize);
 
 }
