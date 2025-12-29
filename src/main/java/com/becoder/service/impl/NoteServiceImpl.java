@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,8 +39,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class NoteServiceImpl implements NoteService {
 
 	@Autowired
-	private NotesRepository notesRepository;
-	@Autowired
 	private CategoryRepository categoryRepository;
 
 	@Autowired
@@ -57,7 +56,9 @@ public class NoteServiceImpl implements NoteService {
 
 		ObjectMapper ob = new ObjectMapper();
 		NotesDto notesDto = ob.readValue(notes, NotesDto.class);
-
+		notesDto.setIsDeleted(false);
+		notesDto.setDeletedOn(null);
+		
 		if (ObjectUtils.isEmpty(notesDto.getId()) == false) {
 			updateNotes(notesDto, file);
 		}
@@ -75,7 +76,7 @@ public class NoteServiceImpl implements NoteService {
 
 		}
 
-		Notes saveNotes = notesRepository.save(notesMap);
+		Notes saveNotes = notesRepo.save(notesMap);
 		if (!ObjectUtils.isEmpty(saveNotes)) {
 			return true;
 		}
@@ -145,7 +146,7 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public List<NotesDto> getAllNotes() {
-		return notesRepository.findAll().stream().map(note -> mapper.map(note, NotesDto.class)).toList();
+		return notesRepo.findAll().stream().map(note -> mapper.map(note, NotesDto.class)).toList();
 	}
 
 	@Override
@@ -162,12 +163,40 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public NotesResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize) {
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
-		Page<Notes> pageNotes = notesRepo.findByCreatedBy(userId, pageable);
+		Page<Notes> pageNotes = notesRepo.findByCreatedByAndIsDeletedFalse(userId, pageable);
 		List<NotesDto> notesDto = pageNotes.get().map(n -> mapper.map(n, NotesDto.class)).toList();
 		NotesResponse notes = NotesResponse.builder().notes(notesDto).pageNo(pageNotes.getNumber())
 				.pageSize(pageNotes.getSize()).totalElements(pageNotes.getTotalElements())
 				.totalPage(pageNotes.getTotalPages()).isFirst(pageNotes.isFirst()).isLast(pageNotes.isLast()).build();
 		return notes;
+	}
+
+	@Override
+	public void softDeleteNotes(Integer id) throws Exception {
+		Notes notes = notesRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Notes id invalid ! Not found"));
+		notes.setIsDeleted(true);
+		notes.setDeletedOn(new Date());
+		notesRepo.save(notes);
+	}
+
+	@Override
+	public void restoreNotes(Integer id) throws Exception {
+		Notes notes = notesRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Notes id invalid ! Not found"));
+		notes.setIsDeleted(false);
+		notes.setDeletedOn(null);
+		notesRepo.save(notes);
+	}
+
+	@Override
+	public List<NotesDto> getUserRecycleBinNotes(Integer userId) {
+		List<Notes> recycleNotes = notesRepo.findByCreatedByAndIsDeletedTrue(userId);
+		
+		List<NotesDto> notesDtoList = recycleNotes.stream().map(note->mapper.map(note, NotesDto.class)).toList();
+		
+		return notesDtoList;
+		
 	}
 
 }

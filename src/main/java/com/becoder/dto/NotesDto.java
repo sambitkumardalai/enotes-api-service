@@ -42,4 +42,8 @@ public class NotesDto {
 		private Integer id;
 		private String name;
 	}
+
+
+	private Boolean isDeleted;
+	private Date deletedOn;
 }
