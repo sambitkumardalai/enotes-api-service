@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,7 +60,7 @@ public class NoteServiceImpl implements NoteService {
 		NotesDto notesDto = ob.readValue(notes, NotesDto.class);
 		notesDto.setIsDeleted(false);
 		notesDto.setDeletedOn(null);
-		
+
 		if (ObjectUtils.isEmpty(notesDto.getId()) == false) {
 			updateNotes(notesDto, file);
 		}
@@ -176,7 +178,7 @@ public class NoteServiceImpl implements NoteService {
 		Notes notes = notesRepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Notes id invalid ! Not found"));
 		notes.setIsDeleted(true);
-		notes.setDeletedOn(new Date());
+		notes.setDeletedOn(LocalDateTime.now());
 		notesRepo.save(notes);
 	}
 
@@ -192,11 +194,32 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public List<NotesDto> getUserRecycleBinNotes(Integer userId) {
 		List<Notes> recycleNotes = notesRepo.findByCreatedByAndIsDeletedTrue(userId);
-		
-		List<NotesDto> notesDtoList = recycleNotes.stream().map(note->mapper.map(note, NotesDto.class)).toList();
-		
+
+		List<NotesDto> notesDtoList = recycleNotes.stream().map(note -> mapper.map(note, NotesDto.class)).toList();
+
 		return notesDtoList;
+	}
+
+	@Override
+	public void hardDeleteNotes(Integer id) throws Exception {
+		Notes notes = notesRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Notes id invalid ! Not found"));
+		if (notes.getIsDeleted()) {
+			notesRepo.delete(notes);
+		} else {
+			throw new IllegalArgumentException("Sorry you can't hard delete directly.");
+		}
+
+	}
+
+	@Override
+	public void emptyRecycleBin(Integer userId) {
+		List<Notes> recycleNotes = notesRepo.findByCreatedByAndIsDeletedTrue(userId);
+		if(!CollectionUtils.isEmpty(recycleNotes)) {
+			notesRepo.deleteAll(recycleNotes);
+		}
 		
 	}
+	
 
 }

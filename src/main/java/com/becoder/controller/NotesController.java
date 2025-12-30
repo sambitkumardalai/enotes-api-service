@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -98,5 +99,16 @@ public class NotesController {
 			return CommonUtil.createBuildResponseMessage("Notes not available in recycle bin.", HttpStatus.OK);
 		}
 		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+	}
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<?> hardDeleteNotes(@PathVariable Integer id) throws Exception {
+		noteService.hardDeleteNotes(id);
+		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
+	}
+	@DeleteMapping("/delete")
+	public ResponseEntity<?> emptyRecycleBin() throws Exception {
+		Integer userId = 1;
+		noteService.emptyRecycleBin(userId);
+		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
 	}
 }
