@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.becoder.dto.FavouriteNoteDto;
 import com.becoder.dto.NotesDto;
 import com.becoder.dto.NotesResponse;
 import com.becoder.entity.FileDetails;
@@ -85,30 +86,57 @@ public class NotesController {
 		noteService.softDeleteNotes(id);
 		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
 	}
+
 	@GetMapping("/restore/{id}")
 	public ResponseEntity<?> restoreNotes(@PathVariable Integer id) throws Exception {
 		noteService.restoreNotes(id);
 		return CommonUtil.createBuildResponseMessage("Restore Success", HttpStatus.OK);
 	}
+
 	@GetMapping("/recycle-bin")
 	public ResponseEntity<?> getUserRecycleBinNotes() throws Exception {
 		Integer userId = 1;
 		List<NotesDto> notes = noteService.getUserRecycleBinNotes(userId);
-		
-		if(CollectionUtils.isEmpty(notes)) {
+
+		if (CollectionUtils.isEmpty(notes)) {
 			return CommonUtil.createBuildResponseMessage("Notes not available in recycle bin.", HttpStatus.OK);
 		}
 		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
 	}
+
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> hardDeleteNotes(@PathVariable Integer id) throws Exception {
 		noteService.hardDeleteNotes(id);
 		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
 	}
+
 	@DeleteMapping("/delete")
 	public ResponseEntity<?> emptyRecycleBin() throws Exception {
 		Integer userId = 1;
 		noteService.emptyRecycleBin(userId);
 		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
 	}
+
+	@GetMapping("/fav/{noteId}")
+	public ResponseEntity<?> favoriteNote(@PathVariable Integer noteId) throws Exception {
+		noteService.favoriteNotes(noteId);
+		return CommonUtil.createBuildResponseMessage("Notes added Favorite", HttpStatus.CREATED);
+	}
+
+	@DeleteMapping("/un-fav/{favNotId}")
+	public ResponseEntity<?> unFavoriteNote(@PathVariable Integer favNotId) throws Exception {
+		noteService.unFavoriteNotes(favNotId);
+		return CommonUtil.createBuildResponseMessage("Remove Favorite", HttpStatus.OK);
+	}
+
+	@GetMapping("/fav-note")
+	public ResponseEntity<?> getUserfavoriteNote() throws Exception {
+
+		List<FavouriteNoteDto> userFavoriteNotes = noteService.getUserFavoriteNotes();
+		if (CollectionUtils.isEmpty(userFavoriteNotes)) {
+			return ResponseEntity.noContent().build();
+		}
+		return CommonUtil.createBuildResponse(userFavoriteNotes, HttpStatus.OK);
+	}
+
 }
