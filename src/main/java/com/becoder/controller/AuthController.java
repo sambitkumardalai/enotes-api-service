@@ -13,7 +13,7 @@ import com.becoder.service.UserService;
 import com.becoder.util.CommonUtil;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
 	@Autowired
