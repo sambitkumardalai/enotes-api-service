@@ -1,10 +1,12 @@
 package com.becoder.util;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.becoder.handler.GenericResponse;
-import org.apache.commons.io.FilenameUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class CommonUtil {
 
@@ -40,18 +42,24 @@ public class CommonUtil {
 		String extension = FilenameUtils.getExtension(originalFileName);
 
 		switch (extension) {
-		case "pdf":
-			return "application/pdf";
-		case "xlsx":
-			return "application/vnd.openxmlformats-officedocument.spreadsheettml.sheet";
-		case "txt":
-			return "text/plan";
-		case "png":
-			return "image/png";
-		case "jpeg":
-			return "image/jpeg";
-		default:
-			return "application/octet-stream";
+			case "pdf":
+				return "application/pdf";
+			case "xlsx":
+				return "application/vnd.openxmlformats-officedocument.spreadsheettml.sheet";
+			case "txt":
+				return "text/plan";
+			case "png":
+				return "image/png";
+			case "jpeg":
+				return "image/jpeg";
+			default:
+				return "application/octet-stream";
 		}
+	}
+
+	public static String getUrl(HttpServletRequest request) {
+		String apiUrl = request.getRequestURL().toString(); // http:localhost:8080/api/v1/auth
+		apiUrl = apiUrl.replace(request.getServletPath(), ""); // http:localhost:8080
+		return apiUrl;
 	}
 }
