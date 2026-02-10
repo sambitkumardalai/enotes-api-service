@@ -3,6 +3,7 @@ package com.becoder.config.security;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +12,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.becoder.handler.GenericResponse;
 import com.becoder.service.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -52,9 +55,19 @@ public class JwtFilter extends OncePerRequestFilter {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("JWT validation error: " + e.getMessage());
+			generateResponseError(response, e);
+			return;
 		}
 		filterChain.doFilter(request, response);
+	}
+
+	private void generateResponseError(HttpServletResponse response, Exception e) throws IOException {
+		response.setContentType("application/json");
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		Object error = GenericResponse.builder().status("failed").message(e.getMessage())
+				.responseStatus(HttpStatus.UNAUTHORIZED).build().create().getBody();
+		response.getWriter().write(new ObjectMapper().writeValueAsString(error));
+
 	}
 
 }

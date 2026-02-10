@@ -22,7 +22,8 @@ public class CustomUserDetails implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> authority = new ArrayList<>();
 		user.getRoles().forEach(r -> {
-			authority.add(new SimpleGrantedAuthority(r.getName()));
+			// if in databse role is like ADMIN,USER then need to concatenate ROLE_ i.e ROLE_ADMIN
+			authority.add(new SimpleGrantedAuthority("ROLE_" + r.getName())); 
 		});
 		return authority;
 	}
@@ -36,13 +37,13 @@ public class CustomUserDetails implements UserDetails {
 	public String getUsername() {
 		return user.getEmail();
 	}
- 
+
 	public User getUser() {
 		return user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
-	} 
+	}
 
 }
