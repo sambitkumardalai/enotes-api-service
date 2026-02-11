@@ -3,7 +3,10 @@ package com.becoder.util;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.becoder.config.security.CustomUserDetails;
+import com.becoder.entity.User;
 import com.becoder.handler.GenericResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,18 +45,18 @@ public class CommonUtil {
 		String extension = FilenameUtils.getExtension(originalFileName);
 
 		switch (extension) {
-			case "pdf":
-				return "application/pdf";
-			case "xlsx":
-				return "application/vnd.openxmlformats-officedocument.spreadsheettml.sheet";
-			case "txt":
-				return "text/plan";
-			case "png":
-				return "image/png";
-			case "jpeg":
-				return "image/jpeg";
-			default:
-				return "application/octet-stream";
+		case "pdf":
+			return "application/pdf";
+		case "xlsx":
+			return "application/vnd.openxmlformats-officedocument.spreadsheettml.sheet";
+		case "txt":
+			return "text/plan";
+		case "png":
+			return "image/png";
+		case "jpeg":
+			return "image/jpeg";
+		default:
+			return "application/octet-stream";
 		}
 	}
 
@@ -61,5 +64,17 @@ public class CommonUtil {
 		String apiUrl = request.getRequestURL().toString(); // http:localhost:8080/api/v1/auth
 		apiUrl = apiUrl.replace(request.getServletPath(), ""); // http:localhost:8080
 		return apiUrl;
+	}
+
+	public static User getLoggedInUser() {
+		try {
+			CustomUserDetails logUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+					.getPrincipal();
+
+			return logUser.getUser();
+		} catch (Exception e) {
+			throw e;
+		}
+
 	}
 }

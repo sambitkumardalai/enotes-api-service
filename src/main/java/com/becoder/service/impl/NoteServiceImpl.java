@@ -38,6 +38,7 @@ import com.becoder.repository.FavouriteNoteRepository;
 import com.becoder.repository.FileRepository;
 import com.becoder.repository.NotesRepository;
 import com.becoder.service.NoteService;
+import com.becoder.util.CommonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -172,7 +173,8 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public NotesResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize) {
+	public NotesResponse getAllNotesByUser(Integer pageNo, Integer pageSize) {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
 		Page<Notes> pageNotes = notesRepo.findByCreatedByAndIsDeletedFalse(userId, pageable);
 		List<NotesDto> notesDto = pageNotes.get().map(n -> mapper.map(n, NotesDto.class)).toList();
@@ -201,7 +203,8 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public List<NotesDto> getUserRecycleBinNotes(Integer userId) {
+	public List<NotesDto> getUserRecycleBinNotes() {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<Notes> recycleNotes = notesRepo.findByCreatedByAndIsDeletedTrue(userId);
 
 		List<NotesDto> notesDtoList = recycleNotes.stream().map(note -> mapper.map(note, NotesDto.class)).toList();
@@ -222,7 +225,8 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public void emptyRecycleBin(Integer userId) {
+	public void emptyRecycleBin() {
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<Notes> recycleNotes = notesRepo.findByCreatedByAndIsDeletedTrue(userId);
 		if (!CollectionUtils.isEmpty(recycleNotes)) {
 			notesRepo.deleteAll(recycleNotes);
@@ -232,7 +236,7 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public void favoriteNotes(Integer noteId) throws Exception {
-		int userId = 1;
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		Notes notes = notesRepo.findById(noteId)
 				.orElseThrow(() -> new ResourceNotFoundException("Notes not found & ID invalid"));
 		FavouriteNote favouriteNote = FavouriteNote.builder().note(notes).userId(userId).build();
@@ -241,7 +245,7 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public void unFavoriteNotes(Integer favouriteNoteId) throws Exception {
-		int userId = 1;
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		FavouriteNote favouriteNote = favouriteNoteRepo.findById(favouriteNoteId)
 				.orElseThrow(() -> new ResourceNotFoundException("Favourite Notes not found & ID invalid"));
 
@@ -251,7 +255,7 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public List<FavouriteNoteDto> getUserFavoriteNotes() throws Exception {
-		int userId = 1;
+		Integer userId = CommonUtil.getLoggedInUser().getId();
 		List<FavouriteNote> favouriteNotes = favouriteNoteRepo.findByUserId(userId);
 		return favouriteNotes.stream().map(fn -> mapper.map(fn, FavouriteNoteDto.class)).toList();
 	}

@@ -81,8 +81,7 @@ public class NotesController {
 			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
 
 	) throws Exception {
-		Integer userId = 1;
-		NotesResponse notes = noteService.getAllNotesByUser(userId, pageNo, pageSize);
+		NotesResponse notes = noteService.getAllNotesByUser(pageNo, pageSize);
 		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
 	}
 
@@ -103,8 +102,8 @@ public class NotesController {
 	@GetMapping("/recycle-bin")
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> getUserRecycleBinNotes() throws Exception {
-		Integer userId = 1;
-		List<NotesDto> notes = noteService.getUserRecycleBinNotes(userId);
+
+		List<NotesDto> notes = noteService.getUserRecycleBinNotes();
 
 		if (CollectionUtils.isEmpty(notes)) {
 			return CommonUtil.createBuildResponseMessage("Notes not available in recycle bin.", HttpStatus.OK);
@@ -121,9 +120,8 @@ public class NotesController {
 
 	@DeleteMapping("/delete")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> emptyRecycleBin() throws Exception {
-		Integer userId = 1;
-		noteService.emptyRecycleBin(userId);
+	public ResponseEntity<?> emptyRecycleBin() throws Exception { 
+		noteService.emptyRecycleBin();
 		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
 	}
 
