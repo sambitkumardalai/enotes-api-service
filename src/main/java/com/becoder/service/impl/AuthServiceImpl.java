@@ -3,7 +3,6 @@ package com.becoder.service.impl;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,8 +22,8 @@ import com.becoder.entity.Role;
 import com.becoder.entity.User;
 import com.becoder.repository.RoleRepository;
 import com.becoder.repository.UserRepository;
-import com.becoder.service.JwtService;
 import com.becoder.service.AuthService;
+import com.becoder.service.JwtService;
 import com.becoder.util.Validation;
 
 @Service
@@ -69,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
 		User saveUser = userRepo.save(user);
 
 		if (!ObjectUtils.isEmpty(saveUser)) {
-			// emailSend(saveUser,url);
+			// emailSendForRegister(saveUser,url);
 			return true;
 		}
 		return false;
@@ -81,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
 		user.setRoles(roles);
 	}
 
-	private void emailSend(User saveUser, String url) throws Exception {
+	private void emailSendForRegister(User saveUser, String url) throws Exception {
 
 		String message = "Hi,<b>[[username]]</b> " + "<br> Your account register sucessfully.<br>"
 				+ "<br> Click the below link verify & Active your account <br>"
