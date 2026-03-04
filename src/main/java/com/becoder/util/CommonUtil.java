@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public class CommonUtil {
 
 	public static ResponseEntity<?> createBuildResponse(Object data, HttpStatus status) {
-
 		GenericResponse response = GenericResponse.builder().responseStatus(status).status("succes").message("succes")
 				.data(data).build();
 		return response.create();
@@ -42,21 +41,21 @@ public class CommonUtil {
 	}
 
 	public static String getContentType(String originalFileName) {
-		String extension = FilenameUtils.getExtension(originalFileName);
+		String extension = FilenameUtils.getExtension(originalFileName); // java_programing.pdf
 
 		switch (extension) {
-		case "pdf":
-			return "application/pdf";
-		case "xlsx":
-			return "application/vnd.openxmlformats-officedocument.spreadsheettml.sheet";
-		case "txt":
-			return "text/plan";
-		case "png":
-			return "image/png";
-		case "jpeg":
-			return "image/jpeg";
-		default:
-			return "application/octet-stream";
+			case "pdf":
+				return "application/pdf";
+			case "xlsx":
+				return "application/vnd.openxmlformats-officedocument.spreadsheettml.sheet";
+			case "txt":
+				return "text/plan";
+			case "png":
+				return "image/png";
+			case "jpeg":
+				return "image/jpeg";
+			default:
+				return "application/octet-stream";
 		}
 	}
 
@@ -70,11 +69,11 @@ public class CommonUtil {
 		try {
 			CustomUserDetails logUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
 					.getPrincipal();
-
 			return logUser.getUser();
 		} catch (Exception e) {
 			throw e;
 		}
 
 	}
+
 }
