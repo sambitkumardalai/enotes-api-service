@@ -4,10 +4,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.becoder.dto.PasswordChngRequest;
@@ -34,7 +30,7 @@ public class UserController implements UserEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> changePassword(@RequestBody PasswordChngRequest passwordRequest) {
+	public ResponseEntity<?> changePassword(PasswordChngRequest passwordRequest) {
 		userService.changePassword(passwordRequest);
 		return CommonUtil.createBuildResponseMessage("Password change success", HttpStatus.OK);
 	}

@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.becoder.dto.CategoryDto;
@@ -27,7 +25,7 @@ public class CategoryController implements CategoryEndpoint {
 	private CategoryService categoryService;
 
 	@Override
-	public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto) {
+	public ResponseEntity<?> saveCategory(CategoryDto categoryDto) {
 
 		Boolean saveCategory = categoryService.saveCategory(categoryDto);
 		if (saveCategory) {
@@ -59,7 +57,7 @@ public class CategoryController implements CategoryEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> getCategortDetailsById(@PathVariable Integer id) throws Exception {
+	public ResponseEntity<?> getCategortDetailsById(Integer id) throws Exception {
 
 		CategoryDto categoryDto = categoryService.getCategoryById(id);
 		if (ObjectUtils.isEmpty(categoryDto)) {
@@ -69,7 +67,7 @@ public class CategoryController implements CategoryEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id) {
+	public ResponseEntity<?> deleteCategoryById(Integer id) {
 		Boolean deleted = categoryService.deleteCategoryById(id);
 		if (deleted) {
 			return CommonUtil.createBuildResponse("Category deleted success", HttpStatus.OK);
