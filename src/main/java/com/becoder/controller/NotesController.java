@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -20,7 +21,6 @@ import com.becoder.service.NoteService;
 import com.becoder.util.CommonUtil;
 
 @RestController
-
 public class NotesController implements NotesEndpoint {
 
 	@Autowired
@@ -48,7 +48,7 @@ public class NotesController implements NotesEndpoint {
 			return ResponseEntity.noContent().build();
 		}
 
-		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+		return CommonUtil.createBuildResponse(notes, OK);
 	}
 
 	@Override
@@ -71,14 +71,6 @@ public class NotesController implements NotesEndpoint {
 
 		return ResponseEntity.ok().headers(headers).body(data);
 
-	}
-
-	@Override
-	public ResponseEntity<?> getAllNotes(Integer pageNo, Integer pageSize
-
-	) throws Exception {
-		NotesResponse notes = noteService.getAllNotesByUser(pageNo, pageSize);
-		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
 	}
 
 	@Override
@@ -111,7 +103,7 @@ public class NotesController implements NotesEndpoint {
 	}
 
 	@Override
-	public ResponseEntity<?> emptyRecycleBin() throws Exception {
+	public ResponseEntity<?> emptyUserRecyleBin() throws Exception {
 		noteService.emptyRecycleBin();
 		return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
 	}
@@ -147,5 +139,11 @@ public class NotesController implements NotesEndpoint {
 		} else {
 			return CommonUtil.createBuildResponseMessage("Notes added Favorite", HttpStatus.CREATED);
 		}
+	}
+
+	@Override
+	public ResponseEntity<?> getAllNotesByUser(Integer pageNo, Integer pageSize) {
+		NotesResponse notes = noteService.getAllNotesByUser(pageNo, pageSize);
+		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
 	}
 }
