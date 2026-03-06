@@ -32,5 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 /log/
-/logs/
-log/logging.log
+/logs/ 
