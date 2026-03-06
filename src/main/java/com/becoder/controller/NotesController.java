@@ -12,7 +12,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -89,8 +88,7 @@ public class NotesController implements NotesEndpoint {
 	@Override
 	@GetMapping("/user-notes")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> getAllNotes(@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-			@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize
+	public ResponseEntity<?> getAllNotes(Integer pageNo, Integer pageSize
 
 	) throws Exception {
 		NotesResponse notes = noteService.getAllNotesByUser(pageNo, pageSize);
