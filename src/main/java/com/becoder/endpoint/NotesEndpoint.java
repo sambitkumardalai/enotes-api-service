@@ -31,7 +31,7 @@ public interface NotesEndpoint {
 
         @GetMapping("/")
         @PreAuthorize(ROLE_ADMIN)
-        public ResponseEntity<?> getAllNotes();
+        public ResponseEntity<?> getAllNotes() throws Exception;
 
         @GetMapping("/search")
         @PreAuthorize(ROLE_USER)
